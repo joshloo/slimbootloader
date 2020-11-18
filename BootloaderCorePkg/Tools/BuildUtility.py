@@ -259,14 +259,14 @@ def split_fsp(path, out_dir):
                 "-o", out_dir])
 
 
-def rebase_fsp(path, out_dir, base_t, base_m, base_s):
+def rebase_fsp(path, out_dir, base_t, base_m, base_v, base_s):
     run_process ([
         sys.executable,
         gtools['FSP_SPLIT'],
         "rebase",
         "-f", path,
-        "-b", "0x%x" % base_t, "0x%x" % base_m, "0x%x" % base_s,
-        "-c", "t" , "m", "s",
+        "-b", "0x%x" % base_t, "0x%x" % base_m, "0x%x" % base_v, "0x%x" % base_s,
+        "-c", "t" , "m", "v", "s",
         "-n", "Fsp.bin",
         "-o", out_dir])
 

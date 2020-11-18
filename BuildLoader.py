@@ -848,17 +848,27 @@ class Build(object):
         setattr(self._board, 'STAGE1A_FV_OFFSET'  , getattr(self._board, 'FSP_T_OFFSET')      + getattr(self._board, 'FSP_T_SIZE'))
         setattr(self._board, 'STAGE1A_FV_SIZE'    , getattr(self._board, 'STAGE1A_FD_SIZE')   - getattr(self._board, 'FSP_T_SIZE'))
         setattr(self._board, 'STAGE1B_FV_OFFSET'  , 0)
-        setattr(self._board, 'STAGE1B_FV_SIZE'    , getattr(self._board, 'STAGE1B_FD_SIZE')   - getattr(self._board, 'FSP_M_SIZE'))
+        setattr(self._board, 'STAGE1B_FV_SIZE'    , getattr(self._board, 'STAGE1B_FD_SIZE')   - getattr(self._board, 'FSP_M_SIZE') - getattr(self._board, 'FSP_V_SIZE'))
         setattr(self._board, 'STAGE2_FV_OFFSET'   , 0)
         setattr(self._board, 'STAGE2_FV_SIZE'     , getattr(self._board, 'STAGE2_FD_SIZE')    - getattr(self._board, 'FSP_S_SIZE'))
         setattr(self._board, 'FSP_S_OFFSET'       , getattr(self._board, 'STAGE2_FV_OFFSET')  + getattr(self._board, 'STAGE2_FV_SIZE'))
+        setattr(self._board, 'FSP_V_OFFSET'       , getattr(self._board, 'STAGE1B_FV_OFFSET') + getattr(self._board, 'STAGE1B_FV_SIZE') + getattr(self._board, 'FSP_V_SIZE'))
         setattr(self._board, 'FSP_M_OFFSET'       , getattr(self._board, 'STAGE1B_FV_OFFSET') + getattr(self._board, 'STAGE1B_FV_SIZE'))
         setattr(self._board, 'FSP_T_BASE'         , getattr(self._board, 'STAGE1A_FD_BASE')   + getattr(self._board, 'FSP_T_OFFSET'))
         setattr(self._board, 'FSP_M_BASE'         , getattr(self._board, 'STAGE1B_FD_BASE')   + getattr(self._board, 'FSP_M_OFFSET'))
+        setattr(self._board, 'FSP_V_BASE'         , getattr(self._board, 'STAGE1B_FD_BASE')   + getattr(self._board, 'FSP_M_OFFSET') + getattr(self._board, 'FSP_V_OFFSET'))
         setattr(self._board, 'FSP_S_BASE'         , getattr(self._board, 'STAGE2_FD_BASE')    + getattr(self._board, 'FSP_S_OFFSET'))
-
-        for stage_c, fsp_c in [('1A', 'T'), ('1B', 'M'), ('2', 'S')]:
+        print("FSP_T_BASE : ", hex(getattr(self._board, 'FSP_T_BASE')))
+        print("FSP_M_BASE : ", hex(getattr(self._board, 'FSP_M_BASE')))
+        print("FSP_V_BASE : ", hex(getattr(self._board, 'FSP_V_BASE')))
+        print("FSP_S_BASE : ", hex(getattr(self._board, 'FSP_S_BASE')))
+        print("FSP_T_OFFSET : ", hex(getattr(self._board, 'FSP_T_OFFSET')))
+        print("FSP_M_OFFSET : ", hex(getattr(self._board, 'FSP_M_OFFSET')))
+        print("FSP_V_OFFSET : ", hex(getattr(self._board, 'FSP_V_OFFSET')))
+        print("FSP_S_OFFSET : ", hex(getattr(self._board, 'FSP_S_OFFSET')))
+        for stage_c, fsp_c in [('1A', 'T'), ('1B', 'M'), ('1B', 'V'), ('2', 'S')]:
           fv_size = getattr(self._board, 'STAGE%s_FV_SIZE' % stage_c)
+          print("fv_size : ", hex(fv_size))
           if fv_size < 0:
             raise Exception ('STAGE%s_FD_SIZE is too small, please adjust it to be at least 0x%x in BoardConfig.py !' %
                             (stage_c, getattr(self._board, 'FSP_%s_SIZE' % fsp_c)))
@@ -940,14 +950,17 @@ class Build(object):
             # rebase FSPM in Stage1B and update stage1B hash in key store
             if self._board.HAVE_FSP_BIN:
                 fsp_path = os.path.join(self._fv_dir, 'Fsp.bin')
-                rebase_fsp (fsp_path, self._fv_dir, self._board.FSP_T_BASE, self._board.FSP_M_BASE - self._board.REDUNDANT_SIZE, self._board.FSP_S_BASE)
+                rebase_fsp (fsp_path, self._fv_dir, self._board.FSP_T_BASE, self._board.FSP_M_BASE - self._board.REDUNDANT_SIZE, self._board.FSP_V_BASE, self._board.FSP_S_BASE)
                 split_fsp (fsp_path, self._fv_dir)
 
                 # write rebased fspm to second firmware
                 di = open(os.path.join(self._fv_dir, 'FSP_M.bin'), 'rb').read()
+                di2 = open(os.path.join(self._fv_dir, 'FSP_V.bin'), 'rb').read()
                 fo = open(stage1b_b_path,'r+b')
+                print("stage1b_b_path : ", stage1b_b_path)
                 fo.seek(self._board.FSP_M_OFFSET)
-                fo.write(di)
+                print("di : ", di)
+                fo.write(di + di2)
                 fo.close()
         else:
             shutil.copy(stage1b_path, stage1b_b_path)
@@ -1108,7 +1121,7 @@ class Build(object):
                 raise Exception  ('Failed to prepare build component binaries !')
 
         # create FSP size and UPD size can be known
-        fsp_list = ['FSP_T', 'FSP_M', 'FSP_S']
+        fsp_list = ['FSP_T', 'FSP_M', 'FSP_V', 'FSP_S']
         if self._board.HAVE_FSP_BIN:
             split_fsp (fsp_path, self._fv_dir)
         else:
@@ -1208,7 +1221,7 @@ class Build(object):
 
         # rebase FSP accordingly
         if self._board.HAVE_FSP_BIN:
-            rebase_fsp(fsp_path, self._fv_dir, self._board.FSP_T_BASE, self._board.FSP_M_BASE, self._board.FSP_S_BASE)
+            rebase_fsp(fsp_path, self._fv_dir, self._board.FSP_T_BASE, self._board.FSP_M_BASE, self._board.FSP_V_BASE, self._board.FSP_S_BASE)
             split_fsp(os.path.join(self._fv_dir, 'Fsp.bin'), self._fv_dir)
 
         # create master key hash
