@@ -866,7 +866,7 @@ class Build(object):
         print("FSP_M_OFFSET : ", hex(getattr(self._board, 'FSP_M_OFFSET')))
         print("FSP_V_OFFSET : ", hex(getattr(self._board, 'FSP_V_OFFSET')))
         print("FSP_S_OFFSET : ", hex(getattr(self._board, 'FSP_S_OFFSET')))
-        for stage_c, fsp_c in [('1A', 'T'), ('1B', 'M'), ('1B', 'V'), ('2', 'S')]:
+        for stage_c, fsp_c in [('1A', 'T'), ('1B', 'M'), ('2', 'S')]:
           fv_size = getattr(self._board, 'STAGE%s_FV_SIZE' % stage_c)
           print("fv_size : ", hex(fv_size))
           if fv_size < 0:

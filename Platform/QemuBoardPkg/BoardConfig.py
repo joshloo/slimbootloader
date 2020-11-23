@@ -103,6 +103,7 @@ class Board(BaseBoard):
 
         self.TEST_SIZE            = 0x00001000
         self.SIIPFW_SIZE          = 0x00010000
+        self.FSPV_SIZE            = 0x00010000
         self.EPAYLOAD_SIZE        = 0x0020D000
         self.PAYLOAD_SIZE         = 0x00020000
         self.CFGDATA_SIZE         = 0x00001000
@@ -239,6 +240,18 @@ class Board(BaseBoard):
           ('TST5',      '',              'Dummy',        container_list_auth_type,   'KEY_ID_CONTAINER_COMP'+'_'+self._RSA_SIGN_TYPE,       0,              0x3000,    0),   # Component 5
           ('TST6',      '',               '',                    '',                                    '',                                 0,              0x1000,    0),   # Component 6
         ])
+        container_list.append ([
+
+          # Name       | Image File |    CompressAlg          | AuthType                               | Key File                    | Region Align | Region Size |  Svn Info
+          # ==================================================================================================================================================================
+          ('FSPV',      'FSP_V.bin',     '',             container_list_auth_type,   'KEY_ID_CONTAINER'+'_'+self._RSA_SIGN_TYPE,            0,              0,         0),   # Container Header
+          ('TST1',      '',              'Dummy',               '',                                        '',                              0,              0x2000,    0),   # Component 1
+          ('TST2',      '',              'Lz4',                 '',                                        '',                              0,              0x3000,    0),   # Component 2
+          ('TST3',      '',              'Lz4',          container_list_auth_type,   'KEY_ID_CONTAINER_COMP'+'_'+self._RSA_SIGN_TYPE,       0,              0x3000,    0),   # Component 3
+          ('TST4',      '',              'Lzma',                   'SHA2_384',                               '',                            0,              0x3000,    0),   # Component 4
+          ('TST5',      '',              'Dummy',        container_list_auth_type,   'KEY_ID_CONTAINER_COMP'+'_'+self._RSA_SIGN_TYPE,       0,              0x3000,    0),   # Component 5
+          ('TST6',      '',               '',                    '',                                    '',                                 0,              0x1000,    0),   # Component 6
+        ])
 
         if self.ENABLE_SBL_SETUP:
             def_auth = container_list_auth_type
@@ -295,6 +308,7 @@ class Board(BaseBoard):
                     ('PAYLOAD.bin'  ,  'Lzma'    , self.PAYLOAD_SIZE,  STITCH_OPS.MODE_FILE_PAD, STITCH_OPS.MODE_POS_TAIL),
                     ('EPAYLOAD.bin' ,  ''        , self.EPAYLOAD_SIZE, STITCH_OPS.MODE_FILE_PAD, STITCH_OPS.MODE_POS_TAIL),
                     ('SIIPFW.bin'   ,  ''        , self.SIIPFW_SIZE,   STITCH_OPS.MODE_FILE_PAD, STITCH_OPS.MODE_POS_TAIL),
+                    ('FSP_V.bin'    ,  ''        , self.FSPV_SIZE,     STITCH_OPS.MODE_FILE_PAD, STITCH_OPS.MODE_POS_TAIL),
                     ('PTEST.bin'    ,  ''        , self.TEST_SIZE,     STITCH_OPS.MODE_FILE_PAD, STITCH_OPS.MODE_POS_TAIL),
                     ('SETP.bin'     ,  ''        , self.SETUP_SIZE,    setup_mode,               STITCH_OPS.MODE_POS_TAIL),
                     ]

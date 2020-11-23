@@ -744,13 +744,18 @@ def GenFspHdr (fspfile, outdir, hfile):
 
 def SplitFspBin (fspfile, outdir, nametemplate):
     fd = FirmwareDevice(0, fspfile)
+    print(fd.FspList)
     fd.ParseFd  ()
+
+    print(fd.FspList)
     fd.ParseFsp ()
 
+    print(fd.FspList)
     for fsp in fd.FspList:
         if fsp.Fih.HeaderRevision < 3:
             raise Exception("ERROR: FSP 1.x is not supported by the split command !")
         ftype = fsp.Type
+        print(ftype)
         if not nametemplate:
             nametemplate = fspfile
         fspname, ext = os.path.splitext(os.path.basename(nametemplate))
