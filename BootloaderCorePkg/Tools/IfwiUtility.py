@@ -250,7 +250,7 @@ class FLASH_MAP(Structure):
         "PAYLOAD"       : "PYLD",
         "EPAYLOAD"      : "EPLD",
         "SIIPFW"        : "IPFW",
-        "FSPV"          : "FSPV",
+        "FSP_V"         : "FSP_",
         "UEFIVARIABLE"  : "UVAR",
         "SPI_IAS1"      : "IAS1",
         "SPI_IAS2"      : "IAS2",

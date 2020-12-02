@@ -368,9 +368,6 @@ SecStartup (
   S3_DATA                        *S3Data;
   PLATFORM_SERVICE               *PlatformService;
   VOID                           *SmbiosEntry;
-  UINT32                          FspvLength;
-  VOID                            *FspvBuffer;
-  VOID                            *mFspvEntry = NULL;
   // Initialize HOB
   LdrGlobal = (LOADER_GLOBAL_DATA *)GetLoaderGlobalDataPointer();
   ASSERT (LdrGlobal != NULL);
@@ -388,10 +385,13 @@ SecStartup (
   // Init all services
   InitializeService ();
 
+/*
+  UINT32                          FspvLength;
+  VOID                            *FspvBuffer;
+  VOID                            *mFspvEntry = NULL;
   DEBUG ((DEBUG_INFO, "\nLoad FSP-V here\n"));
 
   mFspvEntry = NULL;
-
   //
   // Check if there is a FSP-V block that needs to be executed
   //
@@ -410,7 +410,7 @@ SecStartup (
   if (!EFI_ERROR (Status)) {
     DEBUG ((DEBUG_INFO, "FSPV entry @ 0x%p\n", mFspvEntry));
   }
-
+*/
 
   BootMode = GetBootMode ();
 

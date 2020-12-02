@@ -244,7 +244,7 @@ class Board(BaseBoard):
 
           # Name       | Image File |    CompressAlg          | AuthType                               | Key File                    | Region Align | Region Size |  Svn Info
           # ==================================================================================================================================================================
-          ('FSPV',      'FSP_V.bin',     '',             container_list_auth_type,   'KEY_ID_CONTAINER'+'_'+self._RSA_SIGN_TYPE,            0,              0,         0),   # Container Header
+          ('FSP_',      'FSP_V.bin',     '',             container_list_auth_type,   'KEY_ID_CONTAINER'+'_'+self._RSA_SIGN_TYPE,            0,              0,         0),   # Container Header
           ('TST1',      '',              'Dummy',               '',                                        '',                              0,              0x2000,    0),   # Component 1
           ('TST2',      '',              'Lz4',                 '',                                        '',                              0,              0x3000,    0),   # Component 2
           ('TST3',      '',              'Lz4',          container_list_auth_type,   'KEY_ID_CONTAINER_COMP'+'_'+self._RSA_SIGN_TYPE,       0,              0x3000,    0),   # Component 3
