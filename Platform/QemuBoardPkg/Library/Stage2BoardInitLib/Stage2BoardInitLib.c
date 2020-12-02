@@ -205,6 +205,7 @@ BoardInit (
 
   switch (InitPhase) {
   case PreSiliconInit:
+      DEBUG ((DEBUG_INFO, "TL............... IM HERE\n"));
     GpioInit ();
     SpiConstructor ();
     EnableLegacyRegions ();
