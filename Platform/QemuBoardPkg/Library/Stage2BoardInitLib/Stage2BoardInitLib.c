@@ -228,19 +228,11 @@ BoardInit (
     // Load IP firmware from container
     Buffer = NULL;
     Length = 0;
-    DEBUG ((DEBUG_INFO, "load IPFW START ------------TL\n"));
-    Status = LoadComponent (SIGNATURE_32('I', 'P', 'F', 'W'), SIGNATURE_32('T', 'S', 'T', '3'), &Buffer,  &Length);
+    DEBUG ((DEBUG_INFO, "load FSPV START ------------TL\n"));
+    Status = LoadComponent (SIGNATURE_32('I', 'P', 'F', 'W'), SIGNATURE_32('T', 'S', 'T', '7'), &Buffer,  &Length);
     DEBUG ((DEBUG_INFO, "Load IP firmware @ %p:0x%X - %r\n", Buffer, Length, Status));
     if (!EFI_ERROR(Status)) {
-      DumpHex (2, 0, Length > 16 ? 16 : Length, Buffer);
-    }
-    Buffer = NULL;
-    Length = 0;
-    DEBUG ((DEBUG_INFO, "load FSPV START ------------TL\n"));
-    Status = LoadComponent (SIGNATURE_32('F', 'S', 'P', '_'), SIGNATURE_32('T', 'S', 'T', '3'), &Buffer,  &Length);
-    DEBUG ((DEBUG_INFO, "Load FSPV @ %p:0x%X - %r\n", Buffer, Length, Status));
-    if (!EFI_ERROR(Status)) {
-      DumpHex (2, 0, Length > 16 ? 16 : Length, Buffer);
+      DumpHex (2, 0, Length > 16 ? 32 : Length, Buffer);
     }
     break;
 
