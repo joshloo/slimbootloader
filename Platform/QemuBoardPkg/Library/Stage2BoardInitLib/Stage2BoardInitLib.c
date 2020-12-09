@@ -234,6 +234,50 @@ BoardInit (
     if (!EFI_ERROR(Status)) {
       DumpHex (2, 0, Length > 16 ? 32 : Length, Buffer);
     }
+
+
+    VOID                      *FspvUpdptr;
+    UINT8                      *DefaultValidationInitUpd;
+    FSP_INFO_HEADER            *FspHeader;
+    FSP_VALIDATION_INIT         FspValidationInit;
+
+    FspHeader = (FSP_INFO_HEADER *)(UINTN)((UINT32)Buffer + FSP_INFO_HEADER_OFF);
+
+    DEBUG ((DEBUG_INFO, "Buffer : 0x%x\n", (UINT32)Buffer));
+    ASSERT (FspHeader->Signature == FSP_INFO_HEADER_SIGNATURE);
+    FspHeader->ImageBase = (UINTN)Buffer;
+    ASSERT (FspHeader->ImageBase == (UINTN)Buffer);
+    FspvUpdptr = AllocatePool (FspHeader->CfgRegionSize);
+    if (FspvUpdptr == NULL) {
+        return;
+    }
+    DEBUG ((DEBUG_INFO, "a \n"));
+    //(VOID) PcdSet32S (PcdFspvUpdptr,(UINT32)(UINTN)FspvUpdptr);
+    // Copy default UPD data
+    DefaultValidationInitUpd = (UINT8 *)(UINTN)(FspHeader->ImageBase + FspHeader->CfgRegionOffset);
+    CopyMem (FspvUpdptr, DefaultValidationInitUpd, FspHeader->CfgRegionSize);
+
+    DEBUG ((DEBUG_INFO, "b \n"));
+    /* Update architectural UPD fields */
+    UpdateFspConfig (FspvUpdptr);
+    DEBUG ((DEBUG_INFO, "c \n"));
+    ASSERT (FspHeader->FspValidationInitEntryOffset != 0);
+    FspValidationInit = (FSP_VALIDATION_INIT)(UINTN)(FspHeader->ImageBase + \
+                                              FspHeader->FspValidationInitEntryOffset);
+
+
+
+    DEBUG ((DEBUG_INFO, "FspHeader->FspValidationInitEntryOffset : 0x%x\n", FspHeader->FspValidationInitEntryOffset));
+    DEBUG ((DEBUG_INFO, "Call FspValidationInit ... \n"));
+    if (IS_X64) {
+      DEBUG ((DEBUG_INFO, "TRY 32 BIT FIRST \n"));
+    //  Status = Execute32BitCode ((UINTN)FspValidationInit,(UINTN) FspvUpdptr, (UINTN)0, FALSE);
+    //  Status = (UINTN)LShiftU64 (Status & ((UINTN)MAX_INT32 + 1), 32) | (Status & MAX_INT32);
+    } else {
+      Status = FspValidationInit (FspvUpdptr);
+    }
+    DEBUG ((DEBUG_INFO, "%r\n", Status));
+
     break;
 
   case PostPciEnumeration:

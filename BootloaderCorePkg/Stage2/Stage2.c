@@ -385,33 +385,6 @@ SecStartup (
   // Init all services
   InitializeService ();
 
-/*
-  UINT32                          FspvLength;
-  VOID                            *FspvBuffer;
-  VOID                            *mFspvEntry = NULL;
-  DEBUG ((DEBUG_INFO, "\nLoad FSP-V here\n"));
-
-  mFspvEntry = NULL;
-  //
-  // Check if there is a FSP-V block that needs to be executed
-  //
-  FspvBuffer = NULL;
-  FspvLength = 0;
-  Status = LoadComponent (SIGNATURE_FSPV, SIGNATURE_32('T', 'S', 'T', '3'), &FspvBuffer, &FspvLength);
-
-  if (EFI_ERROR (Status) || (FspvBuffer == NULL) || (FspvLength == 0)) {
-    DEBUG ((DEBUG_INFO, "Error or no buffer or 0 length\n"));
-  }
-
-    if (!EFI_ERROR(Status)) {
-      DumpHex (2, 0, FspvLength > 16 ? 16 : FspvLength, FspvBuffer);
-    }
- // Status = LoadElfImage (FspvBuffer, &mFspvEntry);
-  if (!EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_INFO, "FSPV entry @ 0x%p\n", mFspvEntry));
-  }
-*/
-
   BootMode = GetBootMode ();
 
   // Update Patchable PCD in case Stage2 is loaded into high mem
