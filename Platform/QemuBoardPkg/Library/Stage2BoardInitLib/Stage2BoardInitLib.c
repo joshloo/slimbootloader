@@ -33,6 +33,7 @@
 #include <GlobalNvsArea.h>
 #include <PlatformBase.h>
 #include <ConfigDataDefs.h>
+#include <Library/FspApiLib.h>
 #include "GpioTbl.h"
 
 #define GRAPHICS_DATA_SIG    SIGNATURE_32 ('Q', 'G', 'F', 'X')
@@ -228,7 +229,7 @@ BoardInit (
     // Load IP firmware from container
     Buffer = NULL;
     Length = 0;
-    DEBUG ((DEBUG_INFO, "load FSPV START ------------TL\n"));
+    DEBUG ((DEBUG_INFO, "loading FSPV\n"));
     Status = LoadComponent (SIGNATURE_32('I', 'P', 'F', 'W'), SIGNATURE_32('T', 'S', 'T', '7'), &Buffer,  &Length);
     DEBUG ((DEBUG_INFO, "Load IP firmware @ %p:0x%X - %r\n", Buffer, Length, Status));
     if (!EFI_ERROR(Status)) {
@@ -272,8 +273,7 @@ BoardInit (
     } else {
       Status = FspValidationInit (FspvUpdptr);
     }
-    DEBUG ((DEBUG_INFO, "%r\n", Status));
-
+    DEBUG ((DEBUG_INFO, "FSPV status: %r\n", Status));
     break;
 
   case PostPciEnumeration:
