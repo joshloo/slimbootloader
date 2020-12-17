@@ -521,22 +521,16 @@ LocateComponentEntry (
 
   CompEntry = NULL;
 
-    DEBUG ((DEBUG_INFO, "load CONTAINER LIBRARY----TL\n"));
   // Search container header from cache
-    DEBUG ((DEBUG_INFO, "ContainerSig : 0x%x\n", ContainerSig));
   ContainerEntry = GetContainerBySignature (ContainerSig);
   if (ContainerEntry == NULL) {
 
-    DEBUG ((DEBUG_INFO, "GET COMPONENT INFO----TL\n"));
     // Location container from Flash Map
     Status = GetComponentInfo (ContainerSig, &ContainerBase, &ContainerSize);
-    DEBUG ((DEBUG_INFO, "ContainerBase : 0x%x\n",ContainerBase));
-    DEBUG ((DEBUG_INFO, "ContainerSize : 0x%x\n",ContainerSize));
     if (EFI_ERROR (Status)) {
       return EFI_NOT_FOUND;
     }
 
-    DEBUG ((DEBUG_INFO, "REGISTER CONTAINER ----TL\n"));
 
     // Register container temporarily
     Status = RegisterContainer (ContainerBase, NULL);
@@ -544,8 +538,6 @@ LocateComponentEntry (
       return EFI_UNSUPPORTED;
     }
 
-    DEBUG ((DEBUG_INFO, "ContainerSig : 0x%x\n", ContainerSig));
-    DEBUG ((DEBUG_INFO, "GetContainerBySignature----TL\n"));
     // Find authentication data offset and authenticate the container header
     ContainerEntry = GetContainerBySignature (ContainerSig);
     if (ContainerEntry == NULL) {
@@ -553,7 +545,6 @@ LocateComponentEntry (
     }
   }
 
-    DEBUG ((DEBUG_INFO, "LocateComponentEntryFromContainer----TL\n"));
   // Locate the component from the container header
   ContainerHdr = (CONTAINER_HDR *)(UINTN)ContainerEntry->HeaderCache;
   if (ComponentName != 0) {
@@ -751,7 +742,6 @@ LoadComponentWithCallback (
   ComponentId = ContainerSig;
   CompLoc = 0;
 
-  DEBUG ((DEBUG_INFO, "load container ----------TL 1\n"));
   if (ContainerSig < COMP_TYPE_INVALID) {
     // Check if it is component type
     Usage        =  1 << ContainerSig;
@@ -775,10 +765,8 @@ LoadComponentWithCallback (
     HashData = NULL;
   } else {
     // Find the component info
-  DEBUG ((DEBUG_INFO, "load container ----------TL 2\n"));
     Status = LocateComponentEntry (ContainerSig, ComponentName, &ContainerEntry, &CompEntry);
     if (EFI_ERROR (Status)) {
-      DEBUG ((DEBUG_INFO, "unsuppoerted from here?\n"));
       return Status;
     }
 
@@ -790,7 +778,6 @@ LoadComponentWithCallback (
       return EFI_UNSUPPORTED;
     }
 
-  DEBUG ((DEBUG_INFO, "load container ----------TL 3\n"));
     // Collect component info
     ContainerHdr = (CONTAINER_HDR *)(UINTN)ContainerEntry->HeaderCache;
     AuthType  = CompEntry->AuthType;
@@ -804,7 +791,6 @@ LoadComponentWithCallback (
     LoadComponentCallback (PROGESS_ID_LOCATE, NULL);
   }
 
-  DEBUG ((DEBUG_INFO, "load container ----------TL 4\n"));
   // Component must have LOADER_COMPRESSED_HEADER
   Status = EFI_UNSUPPORTED;
   CompressHdr  = (LOADER_COMPRESSED_HEADER *)CompData;
@@ -829,7 +815,6 @@ LoadComponentWithCallback (
     return EFI_UNSUPPORTED;
   }
 
-  DEBUG ((DEBUG_INFO, "load container ----------TL 5\n"));
   // If it is required to use an existing buffer, verify the size
   ReqCompBase = NULL;
   DecompressedLen = CompressHdr->Size;
@@ -864,7 +849,6 @@ LoadComponentWithCallback (
     ScrBuf  = AllocBuf;
   }
 
-  DEBUG ((DEBUG_INFO, "load container ----------TL 6\n"));
   // Verify the component
   Status = AuthenticateComponent (CompBuf, SignedDataLen, AuthType,
              CompData + ALIGN_UP(SignedDataLen, AUTH_DATA_ALIGN),  HashData, Usage);
@@ -916,7 +900,6 @@ LoadComponentWithCallback (
   } else {
     Status = EFI_SECURITY_VIOLATION;
   }
-  DEBUG ((DEBUG_INFO, "load container ----------TL 7\n"));
   FreeTemporaryMemory (AllocBuf);
 
   if (!EFI_ERROR (Status)) {

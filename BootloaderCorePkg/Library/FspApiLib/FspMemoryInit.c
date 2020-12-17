@@ -67,6 +67,8 @@ CallFspMemoryInit (
   FspMemoryInit = (FSP_MEMORY_INIT)(UINTN)(FspHeader->ImageBase + \
                                            FspHeader->FspMemoryInitEntryOffset);
 
+    DEBUG ((DEBUG_INFO, "FspHeader->FspMemoryInitEntryOffset : 0x%x\n", FspHeader->FspMemoryInitEntryOffset));
+    DEBUG ((DEBUG_INFO, "FspHeader->ImageBase : 0x%x\n", FspHeader->ImageBase));
   DEBUG ((DEBUG_INFO, "Call FspMemoryInit ... "));
 
   NewStack = PcdGet32 (PcdFSPMStackTop);

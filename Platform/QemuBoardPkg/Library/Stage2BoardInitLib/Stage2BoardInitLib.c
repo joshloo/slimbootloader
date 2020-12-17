@@ -251,23 +251,19 @@ BoardInit (
     if (FspvUpdptr == NULL) {
         return;
     }
-    DEBUG ((DEBUG_INFO, "a \n"));
     //(VOID) PcdSet32S (PcdFspvUpdptr,(UINT32)(UINTN)FspvUpdptr);
     // Copy default UPD data
     DefaultValidationInitUpd = (UINT8 *)(UINTN)(FspHeader->ImageBase + FspHeader->CfgRegionOffset);
     CopyMem (FspvUpdptr, DefaultValidationInitUpd, FspHeader->CfgRegionSize);
 
-    DEBUG ((DEBUG_INFO, "b \n"));
     /* Update architectural UPD fields */
-    UpdateFspConfig (FspvUpdptr);
-    DEBUG ((DEBUG_INFO, "c \n"));
+    //UpdateFspConfig (FspvUpdptr);
     ASSERT (FspHeader->FspValidationInitEntryOffset != 0);
     FspValidationInit = (FSP_VALIDATION_INIT)(UINTN)(FspHeader->ImageBase + \
                                               FspHeader->FspValidationInitEntryOffset);
 
-
-
     DEBUG ((DEBUG_INFO, "FspHeader->FspValidationInitEntryOffset : 0x%x\n", FspHeader->FspValidationInitEntryOffset));
+    DEBUG ((DEBUG_INFO, "FspHeader->ImageBase : 0x%x\n", FspHeader->ImageBase));
     DEBUG ((DEBUG_INFO, "Call FspValidationInit ... \n"));
     if (IS_X64) {
       DEBUG ((DEBUG_INFO, "TRY 32 BIT FIRST \n"));
